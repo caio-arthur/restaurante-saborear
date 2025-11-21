@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ShoppingBag, Phone, Clock, MapPin, UtensilsCrossed, Search, Coffee, Beer, Wine, Cake, Flame } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, Phone, Clock, MapPin, UtensilsCrossed, Search, Coffee, Beer, Wine, Cake, Flame, X, Plus, Minus, Trash2 } from 'lucide-react';
 
 import batataRustica from './assets/produtos-imagens/batata rustica com cheddar.jpg';
 import parmegianaPremium from './assets/produtos-imagens/parmegiana premium.jpg';
@@ -23,8 +23,13 @@ import cremeBrulee from './assets/produtos-imagens/creme brulee.jpeg';
 const App = () => {
   const [categoriaAtiva, setCategoriaAtiva] = useState('Todos');
   const [termoBusca, setTermoBusca] = useState('');
+  const [carrinho, setCarrinho] = useState([]);
+  const [carrinhoAberto, setCarrinhoAberto] = useState(false);
+  
+  // Novo estado para controlar a animação
+  const [animarCarrinho, setAnimarCarrinho] = useState(false);
 
-  // Dados estáticos (Mock) conforme solicitado
+  // Dados estáticos (Mock)
   const categorias = [
     { id: 'Todos', label: 'Todos', icon: <UtensilsCrossed size={18} /> },
     { id: 'Entradas', label: 'Entradas', icon: <Flame size={18} /> },
@@ -241,6 +246,49 @@ const App = () => {
     },
   ];
 
+  // --- LÓGICA DO CARRINHO ---
+
+  const adicionarAoCarrinho = (produto) => {
+    // Ativa a animação
+    setAnimarCarrinho(true);
+    
+    // Desativa a animação após 300ms (tempo suficiente para o efeito visual)
+    setTimeout(() => setAnimarCarrinho(false), 300);
+
+    setCarrinho((prevCarrinho) => {
+      // Verifica se o item já existe
+      const itemExistente = prevCarrinho.find((item) => item.id === produto.id);
+      
+      if (itemExistente) {
+        // Se existe, incrementa quantidade
+        return prevCarrinho.map((item) => 
+          item.id === produto.id ? { ...item, quantidade: item.quantidade + 1 } : item
+        );
+      }
+      // Se não existe, adiciona com quantidade 1
+      return [...prevCarrinho, { ...produto, quantidade: 1 }];
+    });
+  };
+
+  const removerDoCarrinho = (produtoId) => {
+    setCarrinho((prevCarrinho) => prevCarrinho.filter((item) => item.id !== produtoId));
+  };
+
+  const atualizarQuantidade = (produtoId, delta) => {
+    setCarrinho((prevCarrinho) => {
+      return prevCarrinho.map((item) => {
+        if (item.id === produtoId) {
+          const novaQuantidade = item.quantidade + delta;
+          return novaQuantidade > 0 ? { ...item, quantidade: novaQuantidade } : item;
+        }
+        return item;
+      });
+    });
+  };
+
+  const totalItens = carrinho.reduce((total, item) => total + item.quantidade, 0);
+  const valorTotal = carrinho.reduce((total, item) => total + (item.preco * item.quantidade), 0);
+
   // Lógica de Filtro
   const produtosFiltrados = produtos.filter((produto) => {
     const matchCategoria = categoriaAtiva === 'Todos' || produto.categoria === categoriaAtiva;
@@ -248,16 +296,25 @@ const App = () => {
     return matchCategoria && matchBusca;
   });
 
-  // Função para gerar link do WhatsApp
-  const comprarNoWhatsapp = (produto) => {
-    const telefone = "5531998436951"; // Número fictício para exemplo
-    const mensagem = `Olá, gostaria de fazer um pedido no Saborear: *${produto.nome}* - R$ ${produto.preco.toFixed(2)}`;
+  // Função para finalizar compra no WhatsApp
+  const finalizarCompraWhatsApp = () => {
+    if (carrinho.length === 0) return;
+
+    const telefone = "5531998436951"; // Número fictício
+    let mensagem = `*Olá! Gostaria de fazer um pedido no Saborear:*\n\n`;
+
+    carrinho.forEach((item) => {
+      mensagem += `${item.quantidade}x ${item.nome} - R$ ${(item.preco * item.quantidade).toFixed(2)}\n`;
+    });
+
+    mensagem += `\n*Total: R$ ${valorTotal.toFixed(2)}*`;
+    
     const url = `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-white relative">
       
       {/* Header / Navbar */}
       <header className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
@@ -270,12 +327,119 @@ const App = () => {
               SABOREAR
             </h1>
           </div>
-          <button className="p-2 hover:bg-slate-800 rounded-full transition-colors relative">
-            <ShoppingBag className="text-slate-300" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+          
+          {/* Ícone do Carrinho com Animação Condicional */}
+          <button 
+            onClick={() => setCarrinhoAberto(true)}
+            className={`
+              p-2 rounded-full transition-all duration-300 relative
+              ${animarCarrinho ? 'bg-slate-800 scale-125 shadow-amber-500/50' : 'hover:bg-slate-800'}
+            `}
+          >
+            <ShoppingBag 
+              className={`transition-colors duration-300 ${animarCarrinho ? 'text-amber-500' : 'text-slate-300'}`} 
+            />
+            {totalItens > 0 && (
+              <span className={`
+                absolute top-0 right-0 bg-amber-500 text-slate-950 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full
+                transition-transform duration-300 ${animarCarrinho ? 'scale-125' : 'scale-100'}
+              `}>
+                {totalItens}
+              </span>
+            )}
           </button>
         </div>
       </header>
+
+      {/* MODAL DO CARRINHO (OVERLAY) */}
+      {carrinhoAberto && (
+        <div className="fixed inset-0 z-[60] flex justify-end">
+          {/* Backdrop Escuro */}
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+            onClick={() => setCarrinhoAberto(false)}
+          ></div>
+
+          {/* Painel Lateral */}
+          <div className="relative w-full max-w-md bg-slate-900 h-full shadow-2xl border-l border-slate-800 flex flex-col animate-in slide-in-from-right duration-300">
+            
+            <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-950">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <ShoppingBag size={20} className="text-amber-500" /> 
+                Seu Pedido
+              </h2>
+              <button onClick={() => setCarrinhoAberto(false)} className="text-slate-400 hover:text-white">
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              {carrinho.length === 0 ? (
+                <div className="text-center py-10 text-slate-500">
+                  <ShoppingBag size={48} className="mx-auto mb-4 opacity-20" />
+                  <p>Seu carrinho está vazio.</p>
+                  <button 
+                    onClick={() => setCarrinhoAberto(false)}
+                    className="mt-4 text-amber-500 hover:underline text-sm"
+                  >
+                    Voltar ao cardápio
+                  </button>
+                </div>
+              ) : (
+                carrinho.map((item) => (
+                  <div key={item.id} className="flex gap-4 bg-slate-950/50 p-3 rounded-xl border border-slate-800 animate-in slide-in-from-bottom-2 fade-in duration-300">
+                    <img src={item.imagem} alt={item.nome} className="w-20 h-20 object-cover rounded-lg" />
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm text-slate-200 line-clamp-1">{item.nome}</h4>
+                      <p className="text-amber-500 font-bold text-sm mt-1">R$ {item.preco.toFixed(2)}</p>
+                      
+                      <div className="flex items-center justify-between mt-3">
+                        <div className="flex items-center bg-slate-800 rounded-lg">
+                          <button 
+                            onClick={() => atualizarQuantidade(item.id, -1)}
+                            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-l-lg transition-colors"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="w-8 text-center text-sm font-medium">{item.quantidade}</span>
+                          <button 
+                            onClick={() => atualizarQuantidade(item.id, 1)}
+                            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-r-lg transition-colors"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => removerDoCarrinho(item.id)}
+                          className="text-rose-500/70 hover:text-rose-500 p-1.5 hover:bg-rose-500/10 rounded-lg transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="p-5 bg-slate-950 border-t border-slate-800">
+              <div className="flex justify-between items-center mb-4 text-lg font-bold">
+                <span className="text-slate-400">Total</span>
+                <span className="text-amber-500">R$ {valorTotal.toFixed(2)}</span>
+              </div>
+              <button 
+                onClick={finalizarCompraWhatsApp}
+                disabled={carrinho.length === 0}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
+              >
+                <Phone size={20} />
+                Finalizar Pedido via WhatsApp
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* Hero Section Simplificada */}
       <div className="relative bg-gradient-to-b from-slate-900 to-slate-950 py-12 px-4">
@@ -287,7 +451,7 @@ const App = () => {
             O melhor sabor da noite
           </h2>
           <p className="text-slate-400 text-lg mb-6">
-            Selecione seu prato favorito e peça diretamente pelo WhatsApp. Rápido, prático e delicioso.
+            Selecione seus pratos favoritos e monte seu pedido completo.
           </p>
           
           {/* Barra de Busca */}
@@ -375,11 +539,11 @@ const App = () => {
                   </p>
                   
                   <button 
-                    onClick={() => comprarNoWhatsapp(produto)}
-                    className="w-full mt-auto bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors shadow-lg shadow-emerald-900/20 group-hover:scale-[1.02] active:scale-95"
+                    onClick={() => adicionarAoCarrinho(produto)}
+                    className="w-full mt-auto bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-200 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all group-hover:shadow-lg active:scale-95 border border-slate-700 hover:border-amber-500"
                   >
-                    <Phone size={18} />
-                    Pedir no WhatsApp
+                    <Plus size={18} />
+                    Adicionar
                   </button>
                 </div>
               </div>
