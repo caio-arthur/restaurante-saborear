@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Phone, Clock, MapPin, UtensilsCrossed, Search, Coffee, Beer, Wine, Cake, Flame, X, Plus, Minus, Trash2 } from 'lucide-react';
+import { ShoppingBag, Phone, Clock, MapPin, UtensilsCrossed, Search, Coffee, Beer, Wine, Cake, Flame, X, Plus, Minus, Trash2, Github } from 'lucide-react';
 
 import batataRustica from './assets/produtos-imagens/batata rustica com cheddar.jpg';
 import parmegianaPremium from './assets/produtos-imagens/parmegiana premium.jpg';
@@ -553,9 +553,11 @@ const App = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-950 border-t border-slate-900 py-8 mt-12">
+      <footer className="bg-slate-950 border-t border-slate-900 py-12 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <div className="flex justify-center gap-6 mb-4 text-slate-500">
+          
+          {/* Informações de Serviço */}
+          <div className="flex justify-center gap-6 mb-8 text-slate-500">
             <div className="flex items-center gap-2">
               <Clock size={16} /> 18:00 - 02:00
             </div>
@@ -563,9 +565,42 @@ const App = () => {
               <MapPin size={16} /> Centro, Sete Lagoas
             </div>
           </div>
-          <p className="text-slate-600 text-sm">
-            © 2024 Restaurante Saborear. Desenvolvido para Projeto de Extensão.
-          </p>
+
+          {/* Divisória sutil */}
+          <div className="w-16 h-1 bg-slate-800 mx-auto rounded-full mb-8"></div>
+
+          {/* Equipe do Projeto */}
+          <div className="mb-8">
+            <h4 className="text-amber-500 text-sm font-bold uppercase tracking-wider mb-4">
+              Equipe do Projeto de Extensão
+            </h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-slate-400 text-sm max-w-3xl mx-auto">
+              <p>Bruna de Paula dos Santos Nogueira</p>
+              <p>Jaqueline Ferreira Silva</p>
+              <p>Letícya Pereira de Oliveira</p>
+              <p>Luísa Cristina Perreira Santos</p>
+              <p>Marina Aparecida Fernandes Oliveira</p>
+              <p>Nieli Cristine Costa Pires</p>
+              <p>Thais Calixto Tolentino</p>
+            </div>
+          </div>
+
+          {/* Links e Copyright */}
+          <div className="flex flex-col items-center gap-4">
+            <a 
+              href="https://github.com/caio-arthur/restaurante-saborear" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors border border-slate-800 px-4 py-2 rounded-full hover:bg-slate-900 hover:border-slate-700"
+            >
+              <Github size={18} />
+              <span className="text-sm">Código Aberto no GitHub</span>
+            </a>
+            
+            <p className="text-slate-700 text-xs mt-4">
+              © 2025 Restaurante Saborear. Desenvolvido com auxílio de IA Generativa.
+            </p>
+          </div>
         </div>
       </footer>
     </div>

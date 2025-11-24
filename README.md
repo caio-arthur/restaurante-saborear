@@ -1,16 +1,56 @@
-# React + Vite
+# 🍽️ Saborear - Cardápio Digital Inteligente
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto de Extensão Universitária focado na aplicação de IA Generativa para pequenos negócios.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📖 Sobre o Projeto
 
-## React Compiler
+O **Saborear** é uma interface de cardápio digital moderna e responsiva, desenvolvida para demonstrar como a Inteligência Artificial pode auxiliar pequenos empresários a digitalizarem seus negócios de forma rápida e eficiente.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+O sistema simula a experiência de um restaurante noturno, permitindo que clientes selecionem pratos, montem um carrinho e enviem o pedido formatado diretamente para o WhatsApp do estabelecimento — eliminando a necessidade de sistemas complexos de backend para operações simples.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ✨ Funcionalidades
+
+- **Design Noturno (Dark Mode):** Interface moderna e elegante.
+- **Cardápio Interativo:** Filtro por categorias (Entradas, Pratos, Bebidas, etc.).
+- **Carrinho de Compras Local:** Gestão dos pedidos diretamente no navegador (sem banco de dados).
+- **Integração com WhatsApp:** Geração automática da mensagem formatada do pedido.
+- **Busca em Tempo Real:** Filtragem instantânea de produtos.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+Este projeto foi construido com tecnologias modernas:
+
+- **React** — Biblioteca para construção de interfaces.
+- **Vite** — Ferramenta de build rápida.
+- **Tailwind CSS** — Framework de estilização utilitária.
+- **Lucide React** — Ícones leves e flexíveis.
+
+---
+
+## 👥 Equipe do Projeto
+
+Este software foi desenvolvido como parte de um Projeto de Extensão pelos acadêmicos:
+
+- Bruna de Paula dos Santos Nogueira  
+- Jaqueline Ferreira Silva  
+- Letícya Pereira de Oliveira  
+- Luísa Cristina Perreira Santos  
+- Marina Aparecida Fernandes Oliveira  
+- Nieli Cristine Costa Pires  
+- Thais Calixto Tolentino  
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
+
+---
+
+Desenvolvido com ❤️ e IA.
